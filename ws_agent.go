@@ -91,12 +91,12 @@ func (a *OKWSAgent) Subscribe(channel, filter string, cb ReceivedDataCallback) e
 	}
 
 	msg, err := Struct2JsonString(bo)
-	if a.config.IsPrint {
-		log.Printf("Send Msg: %s", msg)
-	}
+
 	if err := a.conn.WriteMessage(websocket.TextMessage, []byte(msg)); err != nil {
 		return err
 	}
+
+	log.Printf("Send Msg: %s", msg)
 
 	cbs := a.subMap[st.channel]
 	if cbs == nil {
@@ -301,9 +301,7 @@ func (a *OKWSAgent) receive() {
 
 		rsp, err := loadResponse(txtMsg)
 		if rsp != nil {
-			if a.config.IsPrint {
-				log.Printf("LoadedRep: %+v, err: %+v", rsp, err)
-			}
+			log.Printf("LoadedRep: %+v, err: %+v", rsp, err)
 		} else {
 			log.Printf("TextMsg: %s", txtMsg)
 		}
