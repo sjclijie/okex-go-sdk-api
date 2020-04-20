@@ -11,9 +11,6 @@ import (
 	"bytes"
 	"compress/flate"
 	"io/ioutil"
-
-	"github.com/gorilla/websocket"
-
 	"log"
 	"os"
 	"os/signal"
@@ -21,6 +18,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/gorilla/websocket"
 )
 
 // OKWSAgent OKEx Wss 链接对象
@@ -199,9 +198,7 @@ func (a *OKWSAgent) finalize() error {
 }
 
 func (a *OKWSAgent) ping() {
-	msg := "ping"
-	//log.Printf("Send Msg: %s", msg)
-	a.conn.WriteMessage(websocket.TextMessage, []byte(msg))
+	a.conn.WriteMessage(websocket.TextMessage, []byte( "ping" ))
 }
 
 // GzipDecode 解压缩通过 Gzip 压缩过的数据
@@ -267,6 +264,7 @@ func (a *OKWSAgent) work() {
 		case tb := <-a.wsTbCh:
 			a.handleTableResponse(tb)
 		case <-a.signalCh:
+			a.Stop()
 			break
 		case err := <-a.errCh:
 			DefaultDataCallBack(err)
